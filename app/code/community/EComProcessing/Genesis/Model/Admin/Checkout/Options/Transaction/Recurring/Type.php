@@ -18,14 +18,25 @@
  */
 
 /**
- * Class EComProcessing_Genesis_Model_Admin_Environment
+ * Class EComProcessing_Genesis_Model_Admin_Transaction_Type
  *
- * Admin options Drop-down for Gateway environment
+ * Admin options Drop-down for Genesis Transaction Types
  */
-class EComProcessing_Genesis_Model_Admin_Environment
+class EComProcessing_Genesis_Model_Admin_Checkout_Options_Transaction_Recurring_Type
 {
     /**
-     * Return the environment types for an Options field
+     * Pre-load the required files
+     */
+    public function __construct()
+    {
+        /** @var EComProcessing_Genesis_Helper_Data $helper */
+        $helper = Mage::helper('ecomprocessing');
+
+        $helper->initLibrary();
+    }
+
+    /**
+     * Return the transaction types for an Options field
      *
      * @return array
      */
@@ -33,7 +44,7 @@ class EComProcessing_Genesis_Model_Admin_Environment
     {
         $options = array();
 
-        foreach ($this->getEnvironmentOptions() as $code => $name) {
+        foreach ($this->getTransactionTypes() as $code => $name) {
             $options[] = array(
                 'value' => $code,
                 'label' => $name
@@ -44,15 +55,20 @@ class EComProcessing_Genesis_Model_Admin_Environment
     }
 
     /**
-     * Get the available environment types
+     * Get the transaction types as:
+     *
+     * key   = Code Name
+     * value = Localized Name
      *
      * @return array
      */
-    protected function getEnvironmentOptions()
+    protected function getTransactionTypes()
     {
         return array(
-            'sandbox'       => Mage::helper('ecomprocessing')->__('Yes'),
-            'production'    => Mage::helper('ecomprocessing')->__('No'),
+            \Genesis\API\Constants\Transaction\Types::INIT_RECURRING_SALE =>
+                Mage::helper('ecomprocessing')->__('Init Recurring Sale'),
+            \Genesis\API\Constants\Transaction\Types::INIT_RECURRING_SALE_3D =>
+                Mage::helper('ecomprocessing')->__('Init Recurring Sale (3D-Secure)')
         );
     }
 }

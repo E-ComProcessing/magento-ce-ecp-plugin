@@ -43,7 +43,7 @@ class EComProcessing_Genesis_Model_Admin_Direct_Options_Transaction_Type
     {
         $options = array();
 
-        foreach (static::getTransactionTypes() as $code => $name) {
+        foreach ($this->getTransactionTypes() as $code => $name) {
             $options[] = array(
                 'value' => $code,
                 'label' => $name
@@ -61,7 +61,7 @@ class EComProcessing_Genesis_Model_Admin_Direct_Options_Transaction_Type
      *
      * @return array
      */
-    static function getTransactionTypes()
+    protected function getTransactionTypes()
     {
         return array(
             \Genesis\API\Constants\Transaction\Types::AUTHORIZE =>

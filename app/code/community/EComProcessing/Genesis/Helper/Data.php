@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2015 E-ComProcessing™
+ * Copyright (C) 2016 E-ComProcessing™
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * @author      E-ComProcessing
- * @copyright   2015 E-ComProcessing™
+ * @copyright   2016 E-ComProcessing™
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
@@ -24,6 +24,11 @@
  */
 class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    const SECURE_TRANSCTION_TYPE_SUFFIX = "3D";
+
+    const RAW_DETAILS_TRANSACTION_TYPE = 'transaction_type';
+    const RAW_DETAILS_TERMINAL_TOKEN = 'terminal_token';
+
     /**
      * Include Genesis library
      *
@@ -31,23 +36,13 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function initLibrary()
     {
-        // Mitigate PHP Bug #52339, as Magento already registers their AutoLoader
         if (!class_exists('\Genesis\Genesis', false)) {
-             $genesisAutoLoadParams = array(
-                'magento_root'                       => MAGENTO_ROOT,
-                'integrated_genesis_lib_auto_loader' => Mage::getBaseDir('lib') . DS . 'Genesis' . DS . 'vendor' . DS . 'autoload.php',
-                'genesis_composer_dir'               => 'genesisgateway',
-                'check_genesis_lib_version'          => '1',
-                'required_genesis_lib_version'       => ">= 1.4"
-             );
-             
-             $genesisAutoLoadVarienObj = new Varien_Object($genesisAutoLoadParams);
-             
-             /* This Event will be handled from Observer EComProcessing_Genesis_Observer_GenesisAutoLoader (defined in etc/config.xml) */
-             Mage::dispatchEvent('ecomprocessing_genesis_init_library', array('genesis_auto_load_params' => $genesisAutoLoadVarienObj));
-        }     	 
+            // @codingStandardsIgnoreStart
+            include Mage::getBaseDir('lib') . DS . 'Genesis' . DS . 'vendor' . DS . 'autoload.php';
+            // @codingStandardsIgnoreEnd
+        }
     }
-    
+
     /**
      * Check whether Genesis is initialized and init if not
      *
@@ -59,15 +54,33 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $this->initLibrary();
 
-        \Genesis\Config::setEndpoint('ecomprocessing');
+        \Genesis\Config::setEndpoint(
+            \Genesis\API\Constants\Endpoints::ECOMPROCESSING
+        );
 
-        \Genesis\Config::setUsername($this->getConfigData($model, 'genesis_username'));
-        \Genesis\Config::setPassword($this->getConfigData($model, 'genesis_password'));
+        \Genesis\Config::setUsername(
+            $this->getConfigData(
+                $model,
+                'genesis_username'
+            )
+        );
 
-        \Genesis\Config::setEnvironment($this->getConfigData($model, 'genesis_environment'));
+        \Genesis\Config::setPassword(
+            $this->getConfigData(
+                $model,
+                'genesis_password'
+            )
+        );
+
+        \Genesis\Config::setEnvironment(
+            $this->getConfigData(
+                $model,
+                'genesis_environment'
+            )
+        );
 
         \Genesis\Config::setToken(
-            $this->getConfigData($model, 'genesis_token') ? $this->getConfigData($model, 'genesis_token') : ''
+            $this->getConfigData($model, 'genesis_token') ?: ""
         );
     }
 
@@ -82,7 +95,11 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
     public function getConfigData($model, $key)
     {
         return Mage::getStoreConfig(
-            sprintf('payment/%s/%s', $model, $key)
+            sprintf(
+                'payment/%s/%s',
+                $model,
+                $key
+            )
         );
     }
 
@@ -97,7 +114,15 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getSuccessURL($model)
     {
-        return Mage::getUrl(sprintf('ecomprocessing/%s/success', $model), array('_secure' => true));
+        return Mage::getUrl(
+            sprintf(
+                'ecomprocessing/%s/success',
+                $model
+            ),
+            array(
+                '_secure' => true
+            )
+        );
     }
 
     /**
@@ -111,7 +136,15 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getFailureURL($model)
     {
-        return Mage::getUrl(sprintf('ecomprocessing/%s/failure', $model), array('_secure' => true));
+        return Mage::getUrl(
+            sprintf(
+                'ecomprocessing/%s/failure',
+                $model
+            ),
+            array(
+                '_secure' => true
+            )
+        );
     }
 
     /**
@@ -125,7 +158,15 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getCancelURL($model)
     {
-        return Mage::getUrl(sprintf('ecomprocessing/%s/cancel', $model), array('_secure' => true));
+        return Mage::getUrl(
+            sprintf(
+                'ecomprocessing/%s/cancel',
+                $model
+            ),
+            array(
+                '_secure' => true
+            )
+        );
     }
 
     /**
@@ -139,7 +180,15 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getNotifyURL($model)
     {
-        return Mage::getUrl(sprintf('ecomprocessing/%s/notify', $model), array('_secure' => true));
+        return Mage::getUrl(
+            sprintf(
+                'ecomprocessing/%s/notify',
+                $model
+            ),
+            array(
+                '_secure' => true
+            )
+        );
     }
 
     /**
@@ -151,7 +200,15 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getRedirectUrl($model)
     {
-        return Mage::getUrl(sprintf('ecomprocessing/%s/redirect', $model), array('_secure' => true));
+        return Mage::getUrl(
+            sprintf(
+                'ecomprocessing/%s/redirect',
+                $model
+            ),
+            array(
+                '_secure' => true
+            )
+        );
     }
 
     /**
@@ -174,11 +231,30 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @return string
      */
-    public function getLocale()
+    public function getLocale($default = 'en')
     {
-        $locale = Mage::app()->getLocale()->getLocaleCode();
+        $languageCode = substr(
+            strtolower(
+                Mage::app()->getLocale()->getLocaleCode()
+            ),
+            0,
+            2
+        );
 
-        return substr($locale, 0, 2);
+        if (!\Genesis\API\Constants\i18n::isValidLanguageCode($languageCode)) {
+            $languageCode = $default;
+        }
+
+        if (!\Genesis\API\Constants\i18n::isValidLanguageCode($languageCode)) {
+            Mage::throwException(
+                $this->__(
+                    'The provided argument is not a valid ISO-639-1 language code ' .
+                    'or is not supported by the Payment Gateway!'
+                )
+            );
+        }
+
+        return $languageCode;
     }
 
     /**
@@ -205,7 +281,9 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
     public function getQuote($quoteId)
     {
         return Mage::getModel('sales/quote')->load(
-            abs(intval($quoteId))
+            abs(
+                (int) $quoteId
+            )
         );
     }
 
@@ -217,37 +295,37 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getArrayFromGatewayResponse($response)
     {
-        $transaction_details = array();
+        $transactionDetails = array();
 
         foreach ($response as $key => $value) {
             if (is_string($value)) {
-                $transaction_details[$key] = $value;
+                $transactionDetails[$key] = $value;
             }
 
             if ($value instanceof DateTime) {
-                $transaction_details[$key] = $value->format('c');
+                $transactionDetails[$key] = $value->format('c');
             }
         }
 
-        return $transaction_details;
+        return $transactionDetails;
     }
 
     /**
      * Get DESC list of specific transactions from payment object
      *
      * @param Mage_Sales_Model_Order_Payment    $payment
-     * @param array|string                      $type_filter
+     * @param array|string                      $typeFilter
      * @return array
      */
-    public function getTransactionFromPaymentObject($payment, $type_filter)
+    public function getTransactionFromPaymentObject($payment, $typeFilter)
     {
         $transactions = array();
 
         $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
-                          ->setOrderFilter($payment->getOrder())
-                          ->addPaymentIdFilter($payment->getId())
-                          ->addTxnTypeFilter($type_filter)
-                          ->setOrder('created_at', Varien_Data_Collection::SORT_ORDER_DESC);
+            ->setOrderFilter($payment->getOrder())
+            ->addPaymentIdFilter($payment->getId())
+            ->addTxnTypeFilter($typeFilter)
+            ->setOrder('created_at', Varien_Data_Collection::SORT_ORDER_DESC);
 
         /** @var Mage_Sales_Model_Order_Payment_Transaction $txn */
         foreach ($collection as $txn) {
@@ -262,7 +340,7 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @see API parameter "Usage" or "Description"
      *
-     * @param Mage_Sales_Model_Order_Payment $order
+     * @param Mage_Sales_Model_Order $order
      *
      * @return string Formatted List of Items
      */
@@ -275,9 +353,14 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
             $product = $item->getProduct();
 
             $productResult[$product->getSku()] = array(
-                'sku' => $product->getSku(),
-                'name' => $product->getName(),
-                'qty' => isset($productResult[$product->getSku()]['qty']) ? $productResult[$product->getSku()]['qty'] : 1,
+                'sku'  =>
+                    $product->getSku(),
+                'name' =>
+                    $product->getName(),
+                'qty'  =>
+                    isset($productResult[$product->getSku()]['qty'])
+                        ? $productResult[$product->getSku()]['qty']
+                        : 1,
             );
         }
 
@@ -288,6 +371,28 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $description;
+    }
+
+    /**
+     * Get list of items in the order
+     *
+     * @see API parameter "Usage" or "Description"
+     *
+     * @param Mage_Payment_Model_Recurring_Profile $profile
+     *
+     * @return string Formatted List of Items
+     */
+    public function getRecurringProfileItemDescription($profile)
+    {
+        $product = $profile->getOrderItemInfo();
+
+        return
+            sprintf(
+                "%s (%s) x %d",
+                $product['name'],
+                $product['sku'],
+                $product['qty']
+            );
     }
 
     /**
@@ -309,11 +414,11 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
 
             if ($quote->getId()) {
                 $quote->setIsActive(1)
-                      ->setReservedOrderId(null)
-                      ->save();
+                    ->setReservedOrderId(null)
+                    ->save();
                 $this->getCheckoutSession()
-                     ->replaceQuote($quote)
-                     ->unsLastRealOrderId();
+                    ->replaceQuote($quote)
+                    ->unsLastRealOrderId();
 
                 return true;
             }
@@ -344,6 +449,7 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
                     )
                     ->save();
                 break;
+
             case \Genesis\API\Constants\Transaction\States::PENDING:
             case \Genesis\API\Constants\Transaction\States::PENDING_ASYNC:
                 $order
@@ -355,9 +461,9 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
                     )
                     ->save();
                 break;
+
             case \Genesis\API\Constants\Transaction\States::ERROR:
             case \Genesis\API\Constants\Transaction\States::DECLINED:
-
                 /** @var Mage_Sales_Model_Order_Invoice $invoice */
                 foreach ($order->getInvoiceCollection() as $invoice) {
                     $invoice->cancel();
@@ -369,6 +475,7 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
                     ->save();
 
                 break;
+
             default:
                 $order->save();
                 break;
@@ -390,8 +497,8 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
     public function setTokenByPaymentTransaction($payment)
     {
         $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
-                          ->setOrderFilter($payment->getOrder())
-                          ->setOrder('created_at', Varien_Data_Collection::SORT_ORDER_ASC);
+            ->setOrderFilter($payment->getOrder())
+            ->setOrder('created_at', Varien_Data_Collection::SORT_ORDER_ASC);
 
         /** @var Mage_Sales_Model_Order_Payment_Transaction $transaction */
         foreach ($collection as $transaction) {
@@ -400,7 +507,7 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
             );
 
             foreach ($information as $field => $value) {
-                if ($field == 'terminal_token') {
+                if ($field == self::RAW_DETAILS_TERMINAL_TOKEN) {
                     \Genesis\Config::setToken($value);
                 }
             }
@@ -435,8 +542,311 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
                 ->getResponse()
                 ->setRedirect($target)
                 ->sendHeaders();
-
-            exit(0);
         }
     }
-} 
+
+    /**
+     * @param string $model
+     * @param string $key
+     * @return bool
+     */
+    public function getConfigBoolValue($model, $key)
+    {
+        return
+            filter_var(
+                $this->getConfigData(
+                    $model,
+                    $key
+                ),
+                FILTER_VALIDATE_BOOLEAN
+            );
+    }
+
+    /**
+     * @param string $method
+     * @return bool
+     */
+    public function getIsMethodActive($method)
+    {
+        return $this->getConfigBoolValue($method, 'active');
+    }
+
+    /**
+     * Returns true if the WebSite is configured over Secured SSL Connection
+     * @return bool
+     */
+    public function getIsSecureConnectionEnabled()
+    {
+        return (bool) Mage::app()->getStore()->isCurrentlySecure();
+    }
+
+    /**
+     * @param string $method
+     * @param Mage_Sales_Model_Quote $quote
+     * @return bool
+     */
+    public function validateRecurringMethodMinMaxOrderTotal($method, $quote)
+    {
+        if (!$this->getCheckoutHasRecurringItems($quote)) {
+            return false;
+        }
+
+        $total = $this->getRecurringQuoteBaseNominalRowTotal(
+            $quote
+        );
+
+        $minTotal = $this->getConfigData($method, 'min_order_total');
+        $maxTotal = $this->getConfigData($method, 'max_order_total');
+        if ($total == 0 || !empty($minTotal) && $total < $minTotal || !empty($maxTotal) && $total > $maxTotal) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $method
+     * @param Mage_Sales_Model_Quote $quote
+     * @param bool $requiresSecureConnection
+     * @param bool $supportsRecurring
+     * @return bool
+     */
+    public function getIsMethodAvailable($method, $quote, $requiresSecureConnection = false, $supportsRecurring = true)
+    {
+        return
+            $this->getIsMethodActive($method) &&
+            (!$requiresSecureConnection || $this->getIsSecureConnectionEnabled()) &&
+            (
+                ($supportsRecurring &&
+                    (!$quote->hasNominalItems() || $this->getConfigBoolValue($method, 'recurring_enabled'))
+                ) ||
+                (!$supportsRecurring && !$quote->hasNominalItems())
+            );
+    }
+
+    /**
+     * @param string $transactionType
+     * @return bool
+     */
+    public function getIsTransaction3dSecure($transactionType)
+    {
+        return
+            $this->getStringEndsWith(
+                strtoupper($transactionType),
+                self::SECURE_TRANSCTION_TYPE_SUFFIX
+            );
+    }
+
+    /**
+     * @param string $haystack
+     * @param string $needle
+     * @return bool
+     */
+    public function getStringEndsWith($haystack, $needle)
+    {
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+
+        return (substr($haystack, -$length) === $needle);
+    }
+
+    /**
+     * Get the Remote Address of the machine
+     * @return string
+     */
+    public function getRemoteAddress()
+    {
+        $remoteAddress = Mage::helper('core/http')->getRemoteAddr(false);
+
+        if (!$remoteAddress && function_exists("gethostbyname")) {
+            $requestHostName = Mage::app()->getRequest()->getHttpHost();
+
+            $remoteAddress = gethostbyname($requestHostName);
+        }
+
+        return $remoteAddress ?: "127.0.0.1";
+    }
+
+    /**
+     * @param string $transactionType
+     * @return bool
+     */
+    public function getIsTransactionTypeInitRecurring($transactionType)
+    {
+        $this->initLibrary();
+
+        $initRecurringTransactionTypes = array(
+            \Genesis\API\Constants\Transaction\Types::INIT_RECURRING_SALE,
+            \Genesis\API\Constants\Transaction\Types::INIT_RECURRING_SALE_3D
+        );
+
+        return !empty($transactionType) && in_array($transactionType, $initRecurringTransactionTypes);
+    }
+
+    /**
+     * Cancels a recurring profile when capture transaction is refunded
+     * @param Mage_Sales_Model_Order_Payment_Transaction $captureTransaction
+     * @return string|null
+     */
+    public function checkAndCancelRecurringProfile($captureTransaction)
+    {
+        $profileReferenceId = null;
+
+        if ($captureTransaction && $captureTransaction->getId()) {
+            $captureTransactionType = $this->getGenesisPaymentTransactionType(
+                $captureTransaction
+            );
+
+            if ($captureTransactionType && $this->getIsTransactionTypeInitRecurring($captureTransactionType)) {
+                $recurringProfileReferenceId =
+                    $captureTransaction->getParentTxnId()
+                        ?: $captureTransaction->getTxnId();
+
+                $recurringProfile = Mage::getModel("sales/recurring_profile")->load(
+                    $recurringProfileReferenceId,
+                    'reference_id'
+                );
+
+                if ($recurringProfile && $recurringProfile->getId()) {
+                    if ($recurringProfile->getState() != Mage_Sales_Model_Recurring_Profile::STATE_CANCELED) {
+                        $recurringProfile->setState(
+                            Mage_Sales_Model_Recurring_Profile::STATE_CANCELED
+                        );
+
+                        $recurringProfile->save();
+
+                        $profileReferenceId = $recurringProfile->getReferenceId();
+                    }
+                }
+            }
+        }
+
+        return $profileReferenceId;
+    }
+
+    /**
+     * Extracts a Transaction Param Value from Transaction Additional Information
+     * @param Mage_Sales_Model_Order_Payment_Transaction $transaction
+     * @return string|null
+     */
+    public function getGenesisPaymentTransactionParam($transaction, $paramName)
+    {
+        if (!is_object($transaction) || !$transaction->getId()) {
+            return null;
+        }
+
+        $transactionRawDetails = $transaction->getAdditionalInformation(
+            Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS
+        );
+
+        return
+            isset($transactionRawDetails[$paramName])
+                ? $transactionRawDetails[$paramName]
+                : null;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Order_Payment_Transaction $transaction
+     * @return string|null
+     */
+    public function getGenesisPaymentTransactionType($transaction)
+    {
+        return $this->getGenesisPaymentTransactionParam(
+            $transaction,
+            self::RAW_DETAILS_TRANSACTION_TYPE
+        );
+    }
+
+    /**
+     * @param Mage_Sales_Model_Order_Payment_Transaction $transaction
+     * @return string|null
+     */
+    public function getGenesisPaymentTransactionToken($transaction)
+    {
+        return $this->getGenesisPaymentTransactionParam(
+            $transaction,
+            self::RAW_DETAILS_TERMINAL_TOKEN
+        );
+    }
+
+    /**
+     * Get Admin Session (Used to display Success and Error Messages)
+     * @return Mage_Core_Model_Session_Abstract
+     */
+    public function getAdminSession()
+    {
+        return Mage::getSingleton("adminhtml/session");
+    }
+
+    /**
+     * Get Init Recurring Fee Config Value for Method
+     * @param string $methodCode
+     * @return string
+     */
+    public function getMethodInitRecurringFee($methodCode)
+    {
+        return str_replace(
+            ',',
+            '.',
+            $this->getConfigData(
+                $methodCode,
+                'recurring_initial_fee'
+            )
+        );
+    }
+
+    /**
+     * Returns the current datetime as a formatted MySQL Datetime Value
+     * @return string
+     */
+    public function formatCurrentDateTimeToMySQLDateTime()
+    {
+        return Mage::getSingleton('core/date')->gmtDate();
+    }
+
+    /**
+     * Detects if a Recurring Item has been added to the Cart
+     * @param Mage_Sales_Model_Quote|null $quote
+     * @return bool
+     */
+    public function getCheckoutHasRecurringItems($quote = null)
+    {
+        $quote = $quote ?: $this->getCheckoutSession()->getQuote();
+
+        return $quote->hasRecurringItems();
+    }
+
+    /**
+     * @param Mage_Sales_Model_Quote $quote
+     * @return float
+     */
+    public function getRecurringQuoteBaseNominalRowTotal($quote)
+    {
+        $baseNominalRowTotal = 0;
+
+        foreach ($quote->getAllAddresses() as $quoteAddress) {
+            foreach ($quoteAddress->getAllNominalItems() as $nominalItem) {
+                if ($nominalItem->getIsNominal()) {
+                    $baseNominalRowTotal += $nominalItem->getBaseNominalRowTotal();
+                }
+            }
+        }
+
+        return $baseNominalRowTotal;
+    }
+
+    /**
+     * Returns Recurring Token per Payment Method
+     * @param string $model
+     * @return string
+     */
+    public function getRecurringSaleToken($model)
+    {
+        return $this->getConfigData(
+            $model,
+            'recurring_token'
+        );
+    }
+}

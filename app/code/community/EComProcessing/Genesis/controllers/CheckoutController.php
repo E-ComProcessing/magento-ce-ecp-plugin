@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2015 E-ComProcessing™
+ * Copyright (C) 2016 E-ComProcessing™
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * @author      E-ComProcessing
- * @copyright   2015 E-ComProcessing™
+ * @copyright   2016 E-ComProcessing™
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
@@ -25,16 +25,16 @@
 class EComProcessing_Genesis_CheckoutController extends Mage_Core_Controller_Front_Action
 {
     /** @var EComProcessing_Genesis_Helper_Data $helper */
-    private $helper;
+    protected $_helper;
 
     /** @var EComProcessing_Genesis_Model_Checkout $checkout */
-    private $checkout;
+    protected $_checkout;
 
     protected function _construct()
     {
-        $this->helper = Mage::helper('ecomprocessing');
+        $this->_helper = Mage::helper('ecomprocessing');
 
-        $this->checkout = Mage::getModel('ecomprocessing/checkout');
+        $this->_checkout = Mage::getModel('ecomprocessing/checkout');
     }
 
     /**
@@ -55,7 +55,7 @@ class EComProcessing_Genesis_CheckoutController extends Mage_Core_Controller_Fro
         }
 
         try {
-            $this->helper->initClient($this->checkout->getCode());
+            $this->_helper->initClient($this->_checkout->getCode());
 
             $notification = new \Genesis\API\Notification(
                 $this->getRequest()->getPost()
@@ -66,14 +66,21 @@ class EComProcessing_Genesis_CheckoutController extends Mage_Core_Controller_Fro
 
                 $reconcile = $notification->getReconciliationObject();
 
+                // @codingStandardsIgnoreStart
                 if (isset($reconcile->unique_id)) {
-                    $this->checkout->processNotification($reconcile);
+                    // @codingStandardsIgnoreStart
+                    $this->_checkout->processNotification($reconcile);
+
+                    $this->getResponse()->clearHeaders();
+                    $this->getResponse()->clearBody();
 
                     $this->getResponse()->setHeader('Content-type', 'application/xml');
 
                     $this->getResponse()->setBody(
                         $notification->generateResponse()
                     );
+
+                    $this->getResponse()->setHttpResponseCode(200);
                 }
             }
         } catch (Exception $exception) {
@@ -92,8 +99,6 @@ class EComProcessing_Genesis_CheckoutController extends Mage_Core_Controller_Fro
      */
     public function redirectAction()
     {
-        $this->helper->redirectIfNotLoggedIn();
-
         $this->getResponse()->setBody(
             $this->getLayout()->createBlock('ecomprocessing/redirect_checkout')->toHtml()
         );
@@ -108,8 +113,6 @@ class EComProcessing_Genesis_CheckoutController extends Mage_Core_Controller_Fro
      */
     public function successAction()
     {
-        $this->helper->redirectIfNotLoggedIn();
-
         $this->_redirect('checkout/onepage/success', array('_secure' => true));
     }
 
@@ -122,12 +125,10 @@ class EComProcessing_Genesis_CheckoutController extends Mage_Core_Controller_Fro
      */
     public function failureAction()
     {
-        $this->helper->redirectIfNotLoggedIn();
+        $this->_helper->restoreQuote();
 
-        $this->helper->restoreQuote();
-
-        $this->helper->getCheckoutSession()->addError(
-            $this->helper->__('We were unable to process your payment! Please check your input or try again later.')
+        $this->_helper->getCheckoutSession()->addError(
+            $this->_helper->__('We were unable to process your payment! Please check your input or try again later.')
         );
 
         $this->_redirect('checkout/cart', array('_secure' => true));
@@ -140,12 +141,10 @@ class EComProcessing_Genesis_CheckoutController extends Mage_Core_Controller_Fro
      */
     public function cancelAction()
     {
-        $this->helper->redirectIfNotLoggedIn();
+        $this->_helper->restoreQuote($shouldCancel = true);
 
-        $this->helper->restoreQuote($shouldCancel = true);
-
-        $this->helper->getCheckoutSession()->addSuccess(
-            $this->helper->__('Your payment session has been cancelled successfully!')
+        $this->_helper->getCheckoutSession()->addSuccess(
+            $this->_helper->__('Your payment session has been cancelled successfully!')
         );
 
         $this->_redirect('checkout/cart', array('_secure' => true));

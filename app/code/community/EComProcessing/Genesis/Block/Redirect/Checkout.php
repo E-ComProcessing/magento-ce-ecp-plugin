@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2015 E-ComProcessing™
+ * Copyright (C) 2016 E-ComProcessing™
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * @author      E-ComProcessing
- * @copyright   2015 E-ComProcessing™
+ * @copyright   2016 E-ComProcessing™
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
@@ -25,9 +25,9 @@
 class EComProcessing_Genesis_Block_Redirect_Checkout extends Mage_Core_Block_Template
 {
     /** @var String */
-    private $unique_id;
+    protected $_uniqueId;
     /** @var EComProcessing_Genesis_Helper_Data $helper */
-    private $helper;
+    protected $_helper;
 
     protected function _construct()
     {
@@ -51,7 +51,7 @@ class EComProcessing_Genesis_Block_Redirect_Checkout extends Mage_Core_Block_Tem
 
         $form
             ->setAction(
-                $this->helper->getCheckoutSession()->getEComProcessingCheckoutRedirectUrl()
+                $this->_helper->getCheckoutSession()->getEcomProcessingCheckoutRedirectUrl()
             )
             ->setId('ecomprocessing_redirect_notification')
             ->setName('ecomprocessing_redirect_notification')
@@ -80,22 +80,22 @@ class EComProcessing_Genesis_Block_Redirect_Checkout extends Mage_Core_Block_Tem
      */
     public function getButtonId()
     {
-        return sprintf('redirect_to_dest_%s', $this->unique_id);
+        return sprintf('redirect_to_dest_%s', $this->_uniqueId);
     }
 
     /**
      * Set Helper
      */
-    private function setHelper()
+    protected function setHelper()
     {
-        $this->helper = Mage::helper('ecomprocessing');
+        $this->_helper = Mage::helper('ecomprocessing');
     }
 
     /**
      * Set Unique Id
      */
-    private function setUniqueId()
+    protected function setUniqueId()
     {
-        $this->unique_id = Mage::helper('core')->uniqHash();
+        $this->_uniqueId = Mage::helper('core')->uniqHash();
     }
 }

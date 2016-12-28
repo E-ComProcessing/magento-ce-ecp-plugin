@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2015 E-ComProcessing™
+ * Copyright (C) 2016 E-ComProcessing™
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * @author      E-ComProcessing
- * @copyright   2015 E-ComProcessing™
+ * @copyright   2016 E-ComProcessing™
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
@@ -73,7 +73,7 @@ class EComProcessing_Genesis_Block_Form_Direct extends Mage_Payment_Block_Form
     public function getCcMonths()
     {
         $months = $this->getData('cc_months');
-        if (is_null($months)) {
+        if ($months === null) {
             $months[0] =  $this->__('Month');
             $months = array_merge($months, $this->_getConfig()->getMonths());
             $this->setData('cc_months', $months);
@@ -89,7 +89,7 @@ class EComProcessing_Genesis_Block_Form_Direct extends Mage_Payment_Block_Form
     public function getCcYears()
     {
         $years = $this->getData('cc_years');
-        if (is_null($years)) {
+        if ($years === null) {
             $years = $this->_getConfig()->getYears();
             $years = array(0=>$this->__('Year'))+$years;
             $this->setData('cc_years', $years);
@@ -106,7 +106,7 @@ class EComProcessing_Genesis_Block_Form_Direct extends Mage_Payment_Block_Form
     {
         if ($this->getMethod()) {
             $configData = $this->getMethod()->getConfigData('useccv');
-            if(is_null($configData)){
+            if ($configData === null) {
                 return true;
             }
             return (bool) $configData;
@@ -121,10 +121,23 @@ class EComProcessing_Genesis_Block_Form_Direct extends Mage_Payment_Block_Form
      */
     protected function _toHtml()
     {
-        Mage::dispatchEvent('payment_form_block_to_html_before', array(
-            'block'     => $this
-        ));
+        Mage::dispatchEvent(
+            'payment_form_block_to_html_before',
+            array(
+                'block'     => $this
+            )
+        );
 
         return parent::_toHtml();
+    }
+
+    /**
+     * Determines if a Nominal Items were added to the cart
+     * @return bool
+     */
+    public function getHasNominalItems()
+    {
+        return
+            Mage::helper("ecomprocessing")->getCheckoutHasRecurringItems();
     }
 }

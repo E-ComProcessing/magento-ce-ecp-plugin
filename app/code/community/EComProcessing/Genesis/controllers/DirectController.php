@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2015 E-ComProcessing™
+ * Copyright (C) 2016 E-ComProcessing™
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * @author      E-ComProcessing
- * @copyright   2015 E-ComProcessing™
+ * @copyright   2016 E-ComProcessing™
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
@@ -25,16 +25,16 @@
 class EComProcessing_Genesis_DirectController extends Mage_Core_Controller_Front_Action
 {
     /** @var EComProcessing_Genesis_Helper_Data $helper */
-    private $helper;
+    protected $_helper;
 
     /** @var EComProcessing_Genesis_Model_Direct $direct */
-    private $direct;
+    protected $_direct;
 
     protected function _construct()
     {
-        $this->helper = Mage::helper('ecomprocessing');
+        $this->_helper = Mage::helper('ecomprocessing');
 
-        $this->direct = Mage::getModel('ecomprocessing/direct');
+        $this->_direct = Mage::getModel('ecomprocessing/direct');
     }
 
     /**
@@ -55,7 +55,7 @@ class EComProcessing_Genesis_DirectController extends Mage_Core_Controller_Front
         }
 
         try {
-            $this->helper->initClient($this->direct->getCode());
+            $this->_helper->initClient($this->_direct->getCode());
 
             $notification = new \Genesis\API\Notification(
                 $this->getRequest()->getPost()
@@ -66,14 +66,22 @@ class EComProcessing_Genesis_DirectController extends Mage_Core_Controller_Front
 
                 $reconcile = $notification->getReconciliationObject();
 
+                // @codingStandardsIgnoreStart
                 if (isset($reconcile->unique_id)) {
-                    $this->direct->processNotification($reconcile);
+                    // @codingStandardsIgnoreEnd
+
+                    $this->_direct->processNotification($reconcile);
+
+                    $this->getResponse()->clearHeaders();
+                    $this->getResponse()->clearBody();
 
                     $this->getResponse()->setHeader('Content-type', 'application/xml');
 
                     $this->getResponse()->setBody(
                         $notification->generateResponse()
                     );
+
+                    $this->getResponse()->setHttpResponseCode(200);
                 }
             }
         } catch (Exception $exception) {
@@ -90,8 +98,6 @@ class EComProcessing_Genesis_DirectController extends Mage_Core_Controller_Front
      */
     public function redirectAction()
     {
-        $this->helper->redirectIfNotLoggedIn();
-
         $this->getResponse()->setBody(
             $this->getLayout()->createBlock('ecomprocessing/redirect_direct')->toHtml()
         );
@@ -106,8 +112,6 @@ class EComProcessing_Genesis_DirectController extends Mage_Core_Controller_Front
      */
     public function successAction()
     {
-        $this->helper->redirectIfNotLoggedIn();
-
         $this->_redirect('checkout/onepage/success', array('_secure' => true));
     }
 
@@ -120,12 +124,10 @@ class EComProcessing_Genesis_DirectController extends Mage_Core_Controller_Front
      */
     public function failureAction()
     {
-        $this->helper->redirectIfNotLoggedIn();
+        $this->_helper->restoreQuote();
 
-        $this->helper->restoreQuote();
-
-        $this->helper->getCheckoutSession()->addError(
-            $this->helper->__('We were unable to process your payment! Please check your input or try again later.')
+        $this->_helper->getCheckoutSession()->addError(
+            $this->_helper->__('We were unable to process your payment! Please check your input or try again later.')
         );
 
         $this->_redirect('checkout/cart', array('_secure' => true));

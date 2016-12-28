@@ -34,6 +34,7 @@ class EComProcessing_Genesis_Model_Admin_Checkout_Options_Transaction_Type
 
         $helper->initLibrary();
     }
+
     /**
      * Return the transaction types for an Options field
      *
@@ -43,7 +44,7 @@ class EComProcessing_Genesis_Model_Admin_Checkout_Options_Transaction_Type
     {
         $options = array();
 
-        foreach (static::getTransactionTypes() as $code => $name) {
+        foreach ($this->getTransactionTypes() as $code => $name) {
             $options[] = array(
                 'value' => $code,
                 'label' => $name
@@ -61,7 +62,7 @@ class EComProcessing_Genesis_Model_Admin_Checkout_Options_Transaction_Type
      *
      * @return array
      */
-    static function getTransactionTypes()
+    protected function getTransactionTypes()
     {
         return array(
             \Genesis\API\Constants\Transaction\Types::ABNIDEAL =>

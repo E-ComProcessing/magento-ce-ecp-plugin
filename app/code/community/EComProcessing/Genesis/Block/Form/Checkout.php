@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2015 E-ComProcessing™
+ * Copyright (C) 2016 E-ComProcessing™
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * @author      E-ComProcessing
- * @copyright   2015 E-ComProcessing™
+ * @copyright   2016 E-ComProcessing™
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
  */
 
@@ -31,5 +31,15 @@ class EComProcessing_Genesis_Block_Form_Checkout extends Mage_Payment_Block_Form
     {
         parent::_construct();
         $this->setTemplate('ecomprocessing/form/checkout.phtml');
+    }
+
+    /**
+     * Determines if a Nominal Items were added to the cart
+     * @return bool
+     */
+    public function getHasNominalItems()
+    {
+        return
+            Mage::helper("ecomprocessing")->getCheckoutHasRecurringItems();
     }
 }
