@@ -216,14 +216,15 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
      * and salted to avoid duplication
      *
      * @param string $prefix Prefix of the orderId
+     * @param int $length Length of the generated string
      *
      * @return string
      */
-    public function genTransactionId($prefix = '')
+    public function genTransactionId($prefix = '', $length = 30)
     {
         $hash = Mage::helper('core')->uniqHash();
 
-        return (string)$prefix . substr($hash, -(strlen($hash) - strlen($prefix)));
+        return substr($prefix . substr($hash, -(strlen($hash) - strlen($prefix))), 0, $length);
     }
 
     /**
@@ -358,9 +359,7 @@ class EComProcessing_Genesis_Helper_Data extends Mage_Core_Helper_Abstract
                 'name' =>
                     $product->getName(),
                 'qty'  =>
-                    isset($productResult[$product->getSku()]['qty'])
-                        ? $productResult[$product->getSku()]['qty']
-                        : 1,
+                    $item->getData('qty_ordered')
             );
         }
 
