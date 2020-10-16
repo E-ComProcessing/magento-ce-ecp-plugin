@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-Copyright (C) 2016 E-ComProcessing™
+Copyright (C) 2016 E-Comprocessing™
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -12,14 +12,14 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-@author      E-ComProcessing
-@copyright   2016 E-ComProcessing™
+@author      E-Comprocessing
+@copyright   2016 E-Comprocessing™
 @license     http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2 (GPL-2.0)
 -->
 <config>
     <modules>
        <EComProcessing_Genesis>
-         <version>1.3.0</version>
+         <version>1.3.1</version>
        </EComProcessing_Genesis>
     </modules>
 
@@ -110,7 +110,7 @@ GNU General Public License for more details.
             <ecomprocessing_direct>
                 <model>ecomprocessing/direct</model>
                 <order_status>pending</order_status>
-                <title>Credit Card (E-ComProcessing Direct)</title>
+                <title>Credit Card (E-Comprocessing Direct)</title>
                 <cctypes>VI,MC,SM,AE,DI,JCB,OT</cctypes>
                 <genesis_type>authorize</genesis_type>
                 <recurring_enabled>0</recurring_enabled>
@@ -120,7 +120,7 @@ GNU General Public License for more details.
             </ecomprocessing_direct>
             <ecomprocessing_checkout>
                 <model>ecomprocessing/checkout</model>
-                <title>Credit Card (E-ComProcessing Checkout)</title>
+                <title>Credit Card (E-Comprocessing Checkout)</title>
                 <payment_action>order</payment_action>
                 <genesis_types>sale</genesis_types>
                 <recurring_enabled>0</recurring_enabled>

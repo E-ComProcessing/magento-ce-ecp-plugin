@@ -1,14 +1,14 @@
-E-ComProcessing Gateway Module for Magento CE
+E-Comprocessing Gateway Module for Magento CE
 =============================
 
-This is a Payment Module for Magento Community Edition, that gives you the ability to process payments through E-ComProcessing's Payment Gateway - Genesis.
+This is a Payment Module for Magento Community Edition, that gives you the ability to process payments through E-Comprocessing's Payment Gateway - Genesis.
 
 Requirements
 ------------
 
 * Magento Community Edition > 1.7 (Tested up to: __1.9.3.1__)
 * [GenesisPHP v1.8.3](https://github.com/GenesisGateway/genesis_php/releases/tag/1.8.3) - (Integrated in Module)
-* PCI-certified server in order to use ```E-ComProcessing Direct```
+* PCI-certified server in order to use ```E-Comprocessing Direct```
 
 *Note:* This module has been tested only with Magento __Community Edition__, it may not work
 as intended with Magento __Enterprise Edition__
@@ -31,7 +31,7 @@ Installation (via Modman)
 * Install [ModMan]
 * Navigate to the root of your Magento installation
 * run ```modman init```
-* and clone this repo ```modman clone https://github.com/E-ComProcessing/magento-ce-ecp-plugin```
+* and clone this repo ```modman clone https://github.com/E-Comprocessing/magento-ce-ecp-plugin```
 * Login inside the Admin Panel and go to ```System``` -> ```Configuration``` -> ```Payment Methods```
 * Check ```Enable```, set the correct credentials, select your prefered payment method and click ```Save config```
 
@@ -40,13 +40,13 @@ Installation (manual)
 
 * Copy the files to the root folder of your Magento installation
 * Login inside the Admin Panel and go to ```System``` -> ```Configuration``` -> ```Payment Methods```
-* If one of the Payment Methods ```E-ComProcessing Direct``` or ```E-ComProcessing Checkout``` is not yet available, 
+* If one of the Payment Methods ```E-Comprocessing Direct``` or ```E-Comprocessing Checkout``` is not yet available, 
   go to  ```System``` -> ```Cache Management``` and clear Magento Cache by clicking on ```Flush Magento Cache```
 * Check ```Enable```, set the correct credentials, select your prefered payment method and click ```Save config```
 
 Configure Magento over secured HTTPS Connection
 ---------------------
-This configuration is needed in order to use the ```E-ComProcessing Direct``` Payment Method.
+This configuration is needed in order to use the ```E-Comprocessing Direct``` Payment Method.
 
 Steps:
 * Ensure you have installed a valid __SSL Certificate__ on your __Web Server__ & you have configured your __Virtual Host__ correctly.
@@ -58,7 +58,7 @@ Steps:
 
 Supported Transactions
 ---------------------
-* ```E-ComProcessing Direct``` Payment Method
+* ```E-Comprocessing Direct``` Payment Method
 	* __Authorize__
 	* __Authorize (3D-Secure)__
 	* __InitRecurringSale__
@@ -67,7 +67,7 @@ Supported Transactions
 	* __Sale__
 	* __Sale (3D-Secure)__
 
-* ```E-ComProcessing Checkout``` Payment Method
+* ```E-Comprocessing Checkout``` Payment Method
     * __ABN iDEAL__
     * __Alipay__
     * __Authorize__
